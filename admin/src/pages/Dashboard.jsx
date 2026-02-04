@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Dashboard() {
     const [voters, setVoters] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchVoters = async () => {
@@ -24,9 +27,23 @@ export default function Dashboard() {
         fetchVoters();
     }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/");
+    };
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6">Voters List</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Voters List</h1>
+
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-600 text-white px-4 py-2 rounded"
+                >
+                    Logout
+                </button>
+            </div>
+
             <div className="overflow-x-auto">
                 <table className="min-w-full border text-sm md:text-base">
                     <thead className="bg-gray-200">
