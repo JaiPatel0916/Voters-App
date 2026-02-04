@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaFileUpload, FaCheckCircle } from "react-icons/fa";
+import { FaFileUpload, FaCheckCircle, FaTimes } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,39 +12,58 @@ const districts = [
   "Chandrapur",
 ];
 
-const FileUpload = ({ label, name, file, onChange }) => {
+const FileUpload = ({ label, name, file, onChange, onRemove, error }) => {
   return (
-    <div>
-      <label className="text-sm font-medium mb-2 block">{label}</label>
+    <div className="flex flex-col items-start">
+      <label className="text-sm font-medium mb-2 text-left w-full">
+        {label} <span className="text-red-500">*</span>
+      </label>
 
-      <label className="flex items-center justify-center w-full px-4 py-3 bg-white border-2 border-dashed rounded-lg cursor-pointer hover:border-blue-400 transition">
-        <FaFileUpload className="text-blue-600 mr-2 text-lg" />
-
+      <div
+        className={`relative flex items-center justify-center w-full px-4 py-3 bg-white border-2 border-dashed rounded-lg transition
+        ${error ? "border-red-500" : "hover:border-blue-400"}`}
+      >
         {file ? (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700 truncate max-w-[180px]">
-              {file.name}
-            </span>
-            <FaCheckCircle className="text-green-500 text-lg" />
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center space-x-2 overflow-hidden">
+              <FaCheckCircle className="text-green-500 text-lg" />
+              <span className="text-sm text-gray-700 truncate max-w-[180px]">
+                {file.name}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onRemove(name)}
+              className="text-red-500 hover:text-red-700 transition"
+            >
+              <FaTimes />
+            </button>
           </div>
         ) : (
-          <span className="text-sm text-gray-500">Click to upload file</span>
+          <label className="flex items-center cursor-pointer w-full justify-center">
+            <FaFileUpload className="text-blue-600 mr-2 text-lg" />
+            <span className="text-sm text-gray-500">Click to upload file</span>
+            <input
+              type="file"
+              name={name}
+              onChange={onChange}
+              className="hidden"
+            />
+          </label>
         )}
+      </div>
 
-        <input
-          type="file"
-          name={name}
-          onChange={onChange}
-          className="hidden"
-          required
-        />
-      </label>
+      {error && (
+        <p className="text-red-500 text-sm mt-1 w-full text-left">{error}</p>
+      )}
     </div>
   );
 };
 
 const UserForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,13 +82,35 @@ const UserForm = () => {
 
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
+      setErrors({ ...errors, [name]: "" });
     } else {
       setFormData({ ...formData, [name]: value });
+      setErrors({ ...errors, [name]: "" });
     }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = "Full Name is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone Number is required";
+    if (!formData.year.trim()) newErrors.year = "Year of Passing is required";
+    if (!formData.district) newErrors.district = "District is required";
+
+    if (!formData.aadhar) newErrors.aadhar = "Aadhar Card is required";
+    if (!formData.marksheet) newErrors.marksheet = "Marksheet is required";
+    if (!formData.photo) newErrors.photo = "Photo is required";
+    if (!formData.pan) newErrors.pan = "PAN Card is required";
+    if (!formData.sign) newErrors.sign = "Signature is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
     if (loading) return;
 
     setLoading(true);
@@ -110,6 +151,8 @@ const UserForm = () => {
           pan: null,
           sign: null,
         });
+
+        setErrors({});
       } else {
         toast.error("Submission failed");
       }
@@ -121,6 +164,9 @@ const UserForm = () => {
     setLoading(false);
   };
 
+  const handleRemoveFile = (fieldName) => {
+    setFormData({ ...formData, [fieldName]: null });
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-blue-100 px-4">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -136,58 +182,99 @@ const UserForm = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Left Card */}
             <div className="bg-white/80 backdrop-blur-md shadow-lg rounded-xl p-6 space-y-4">
-              <div>
-                <label className="text-sm font-medium block mb-1">
-                  Full Name
+              <div className="flex flex-col items-start">
+                <label className="text-sm font-medium text-gray-900 mb-1 text-left w-full">
+                  Full Name <span className="text-red-500">*</span>
                 </label>
+
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                  required
+                  className={`w-full px-3 py-2 border rounded-md text-left ${
+                    errors.name
+                      ? "border-red-500"
+                      : "focus:ring-2 focus:ring-blue-400"
+                  }`}
                 />
+
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1 text-left w-full">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <label className="text-sm font-medium block mb-1">
-                  Phone Number
+              <div className="flex flex-col items-start">
+                <label className="text-sm font-medium block mb-1 text-left w-full">
+                  Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                  required
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.phone
+                      ? "border-red-500"
+                      : "focus:ring-2 focus:ring-blue-400"
+                  }`}
                 />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                )}
               </div>
 
-              <div>
-                <label className="text-sm font-medium block mb-1">
-                  Year of Passing
+              <div className="flex flex-col items-start">
+                <label className="text-sm font-medium block mb-1 w-full text-left">
+                  Year of Passing <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="number"
+
+                <select
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                  required
-                />
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.year
+                      ? "border-red-500"
+                      : "focus:ring-2 focus:ring-blue-400"
+                  }`}
+                >
+                  <option value="">Select Year</option>
+
+                  {Array.from(
+                    { length: new Date().getFullYear() - 1949 },
+                    (_, i) => 1950 + i,
+                  )
+                    .reverse()
+                    .map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                </select>
+
+                {errors.year && (
+                  <p className="text-red-500 text-sm mt-1 w-full text-left">
+                    {errors.year}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <label className="text-sm font-medium block mb-1">
-                  District
+              <div className="flex flex-col items-start">
+                <label className="text-sm font-medium block mb-1 text-left w-full">
+                  District <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="district"
                   value={formData.district}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                  required
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.district
+                      ? "border-red-500"
+                      : "focus:ring-2 focus:ring-blue-400"
+                  }`}
                 >
                   <option value="">Select District</option>
                   {districts.map((district, index) => (
@@ -196,6 +283,9 @@ const UserForm = () => {
                     </option>
                   ))}
                 </select>
+                {errors.district && (
+                  <p className="text-red-500 text-sm mt-1">{errors.district}</p>
+                )}
               </div>
             </div>
 
@@ -206,30 +296,40 @@ const UserForm = () => {
                 name="aadhar"
                 file={formData.aadhar}
                 onChange={handleChange}
+                onRemove={handleRemoveFile}
+                error={errors.aadhar}
               />
               <FileUpload
                 label="Final Year Marksheet / Degree"
                 name="marksheet"
                 file={formData.marksheet}
                 onChange={handleChange}
+                onRemove={handleRemoveFile}
+                error={errors.marksheet}
               />
               <FileUpload
                 label="Photo"
                 name="photo"
                 file={formData.photo}
                 onChange={handleChange}
+                onRemove={handleRemoveFile}
+                error={errors.photo}
               />
               <FileUpload
                 label="PAN Card / Marriage Certificate"
                 name="pan"
                 file={formData.pan}
                 onChange={handleChange}
+                onRemove={handleRemoveFile}
+                error={errors.pan}
               />
               <FileUpload
                 label="Signature"
                 name="sign"
                 file={formData.sign}
                 onChange={handleChange}
+                onRemove={handleRemoveFile}
+                error={errors.sign}
               />
             </div>
           </div>
