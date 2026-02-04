@@ -136,7 +136,7 @@ const UserForm = () => {
       data.append("signature", formData.sign);
 
       const response = await fetch(
-        "http://localhost:5000/api/voters/register",
+        "https://voters-app-backend.vercel.app/api/voters/register",
         {
           method: "POST",
           body: data,
