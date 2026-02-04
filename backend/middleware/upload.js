@@ -4,9 +4,14 @@ const cloudinary = require("../config/cloudinary");
 
 const storage = new CloudinaryStorage({
     cloudinary,
-    params: {
-        folder: "voters",
-        allowed_formats: ["jpg", "png", "jpeg", "pdf"],
+    params: async (req, file) => {
+        const isPdf = file.mimetype === "application/pdf";
+
+        return {
+            folder: "voters",
+            resource_type: isPdf ? "raw" : "image",  // ✅ KEY FIX
+            format: isPdf ? "pdf" : undefined,
+        };
     },
 });
 
