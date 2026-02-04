@@ -54,9 +54,15 @@ const FileUpload = ({ label, name, file, onChange, onRemove, error }) => {
         )}
       </div>
 
+      {/* File size hint */}
+      <p className="text-xs text-gray-500 mt-1 w-full text-left">
+        Maximum file size: 10 MB (JPG, PNG, PDF)
+      </p>
+
       {error && (
         <p className="text-red-500 text-sm mt-1 w-full text-left">{error}</p>
       )}
+
     </div>
   );
 };
@@ -137,7 +143,10 @@ const UserForm = () => {
         },
       );
 
+      const result = await response.json();
+
       if (response.ok) {
+
         toast.success("Form submitted successfully 🎉");
 
         setFormData({
@@ -154,7 +163,8 @@ const UserForm = () => {
 
         setErrors({});
       } else {
-        toast.error("Submission failed");
+        toast.error(result.msg || "Submission failed");
+
       }
     } catch (error) {
       console.error(error);
@@ -210,21 +220,30 @@ const UserForm = () => {
                 <label className="text-sm font-medium block mb-1 text-left w-full">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
+
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md ${
-                    errors.phone
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ""); // allow only digits
+                    if (value.length <= 10) {
+                      setFormData({ ...formData, phone: value });
+                      setErrors({ ...errors, phone: "" });
+                    }
+                  }}
+                  maxLength={10}
+                  className={`w-full px-3 py-2 border rounded-md ${errors.phone
                       ? "border-red-500"
                       : "focus:ring-2 focus:ring-blue-400"
-                  }`}
+                    }`}
                 />
+
                 {errors.phone && (
                   <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                 )}
               </div>
+
 
               <div className="flex flex-col items-start">
                 <label className="text-sm font-medium block mb-1 w-full text-left">
