@@ -1,4 +1,6 @@
 const express = require("express");
+const auth = require("../middleware/auth");
+
 const { upload } = require("../middleware/upload");
 const Voter = require("../models/Voter");
 
@@ -35,9 +37,10 @@ router.post(
     }
 );
 
-router.get("/all", async (req, res) => {
+router.get("/all", auth, async (req, res) => {
     const voters = await Voter.find();
     res.json(voters);
 });
+
 
 module.exports = router;
