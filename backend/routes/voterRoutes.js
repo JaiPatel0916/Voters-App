@@ -32,6 +32,13 @@ router.post(
 
             res.json(voter);
         } catch (err) {
+            
+            if (err.code === 11000) {
+                return res.status(400).json({
+                    msg: "This phone number is already registered",
+                });
+            }
+
             res.status(500).json({ error: err.message });
         }
     }

@@ -10,6 +10,7 @@ const voterSchema = new mongoose.Schema(
         phone: {
             type: String,
             required: true,
+            unique: true,
         },
 
         yearOfPassing: {
