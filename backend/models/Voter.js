@@ -30,6 +30,12 @@ const voterSchema = new mongoose.Schema(
             ],
             required: true,
         },
+        gender: {
+            type: String,
+            enum: ["Male", "Female", "Prefer not to say"],
+            required: true,
+        },
+
 
         // Documents (Cloudinary URLs)
 

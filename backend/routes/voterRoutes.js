@@ -17,12 +17,13 @@ router.post(
     ]),
     async (req, res) => {
         try {
+            console.log(req.body); 
             const voter = await Voter.create({
                 name: req.body.name,
                 phone: req.body.phone,
                 yearOfPassing: req.body.yearOfPassing,
                 district: req.body.district,
-
+                gender: req.body.gender,
                 aadharCard: req.files.aadharCard[0].path,
                 marksheetOrDegree: req.files.marksheetOrDegree[0].path,
                 passportPhoto: req.files.passportPhoto[0].path,
