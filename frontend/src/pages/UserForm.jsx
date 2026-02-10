@@ -62,7 +62,6 @@ const FileUpload = ({ label, name, file, onChange, onRemove, error }) => {
       {error && (
         <p className="text-red-500 text-sm mt-1 w-full text-left">{error}</p>
       )}
-
     </div>
   );
 };
@@ -104,11 +103,12 @@ const UserForm = () => {
     if (!formData.district) newErrors.district = "District is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
 
-
     if (!formData.aadhar) newErrors.aadhar = "Aadhar Card is required";
     if (!formData.marksheet) newErrors.marksheet = "Marksheet is required";
     if (!formData.photo) newErrors.photo = "Photo is required";
-    if (!formData.pan) newErrors.pan = "PAN Card is required";
+    if (formData.gender !== "Male" && !formData.pan) {
+      newErrors.pan = "PAN Card is required";
+    }
     if (!formData.sign) newErrors.sign = "Signature is required";
 
     setErrors(newErrors);
@@ -132,7 +132,6 @@ const UserForm = () => {
       data.append("district", formData.district);
       data.append("gender", formData.gender);
 
-
       data.append("aadharCard", formData.aadhar);
       data.append("marksheetOrDegree", formData.marksheet);
       data.append("passportPhoto", formData.photo);
@@ -150,7 +149,6 @@ const UserForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-
         toast.success("Form submitted successfully 🎉");
 
         setFormData({
@@ -169,7 +167,6 @@ const UserForm = () => {
         setErrors({});
       } else {
         toast.error(result.msg || "Submission failed");
-
       }
     } catch (error) {
       console.error(error);
@@ -238,17 +235,17 @@ const UserForm = () => {
                     }
                   }}
                   maxLength={10}
-                  className={`w-full px-3 py-2 border rounded-md ${errors.phone
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.phone
                       ? "border-red-500"
                       : "focus:ring-2 focus:ring-blue-400"
-                    }`}
+                  }`}
                 />
 
                 {errors.phone && (
                   <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                 )}
               </div>
-
 
               <div className="flex flex-col items-start">
                 <label className="text-sm font-medium block mb-1 w-full text-left">
@@ -295,10 +292,11 @@ const UserForm = () => {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md ${errors.gender
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.gender
                       ? "border-red-500"
                       : "focus:ring-2 focus:ring-blue-400"
-                    }`}
+                  }`}
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -310,7 +308,6 @@ const UserForm = () => {
                   <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
                 )}
               </div>
-
 
               <div className="flex flex-col items-start">
                 <label className="text-sm font-medium block mb-1 text-left w-full">
@@ -365,14 +362,17 @@ const UserForm = () => {
                 onRemove={handleRemoveFile}
                 error={errors.photo}
               />
-              <FileUpload
-                label="PAN Card / Marriage Certificate"
-                name="pan"
-                file={formData.pan}
-                onChange={handleChange}
-                onRemove={handleRemoveFile}
-                error={errors.pan}
-              />
+              {formData.gender !== "Male" && (
+                <FileUpload
+                  label="PAN Card / Marriage Certificate"
+                  name="pan"
+                  file={formData.pan}
+                  onChange={handleChange}
+                  onRemove={handleRemoveFile}
+                  error={errors.pan}
+                />
+              )}
+
               <FileUpload
                 label="Signature"
                 name="sign"
