@@ -102,6 +102,8 @@ const UserForm = () => {
     if (!formData.phone.trim()) newErrors.phone = "Phone Number is required";
     if (!formData.year.trim()) newErrors.year = "Year of Passing is required";
     if (!formData.district) newErrors.district = "District is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+
 
     if (!formData.aadhar) newErrors.aadhar = "Aadhar Card is required";
     if (!formData.marksheet) newErrors.marksheet = "Marksheet is required";
@@ -128,6 +130,8 @@ const UserForm = () => {
       data.append("phone", formData.phone);
       data.append("yearOfPassing", formData.year);
       data.append("district", formData.district);
+      data.append("gender", formData.gender);
+
 
       data.append("aadharCard", formData.aadhar);
       data.append("marksheetOrDegree", formData.marksheet);
@@ -154,6 +158,7 @@ const UserForm = () => {
           phone: "",
           year: "",
           district: "",
+          gender: "",
           aadhar: null,
           marksheet: null,
           photo: null,
@@ -280,6 +285,32 @@ const UserForm = () => {
                   </p>
                 )}
               </div>
+
+              <div className="flex flex-col items-start">
+                <label className="text-sm font-medium block mb-1 text-left w-full">
+                  Gender <span className="text-red-500">*</span>
+                </label>
+
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className={`w-full px-3 py-2 border rounded-md ${errors.gender
+                      ? "border-red-500"
+                      : "focus:ring-2 focus:ring-blue-400"
+                    }`}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+
+                {errors.gender && (
+                  <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+                )}
+              </div>
+
 
               <div className="flex flex-col items-start">
                 <label className="text-sm font-medium block mb-1 text-left w-full">

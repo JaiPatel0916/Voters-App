@@ -133,7 +133,9 @@ export default function Dashboard() {
                             <th className="border p-2">Name</th>
                             <th className="border p-2">Phone</th>
                             <th className="border p-2">Year</th>
+                            <th className="border p-2">Gender</th>
                             <th className="border p-2">District</th>
+
                             <th className="border p-2 text-center">Documents</th>
                             <th className="border p-2 text-center">Download All</th>
                         </tr>
@@ -145,6 +147,8 @@ export default function Dashboard() {
                                 <td className="border p-2">{v.name}</td>
                                 <td className="border p-2">{v.phone}</td>
                                 <td className="border p-2">{v.yearOfPassing}</td>
+                                <td className="border p-2">{v.gender}</td>
+
                                 <td className="border p-2">{v.district}</td>
 
                                 <td className="border p-2">
