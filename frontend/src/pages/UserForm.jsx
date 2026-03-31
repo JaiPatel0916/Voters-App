@@ -138,7 +138,7 @@ const UserForm = () => {
     setLoading(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://voters-app-backend.vercel.app";
       const data = new FormData();
 
       data.append("name", formData.name);
