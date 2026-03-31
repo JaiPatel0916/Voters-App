@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 const instance = axios.create({
-    baseURL: "https://voters-app-backend.vercel.app/api",
+    baseURL: baseUrl,
 });
 
 export default instance;

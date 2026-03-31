@@ -56,7 +56,10 @@ const voterSchema = new mongoose.Schema(
 
         panOrMarriageCert: {
             type: String,
-            required: true,
+            required: function () {
+                return this.gender !== "Male";
+            },
+            default: null,
         },
 
         signature: {
