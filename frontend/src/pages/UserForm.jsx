@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FaFileUpload, FaCheckCircle, FaTimes } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../assets/Enhanced Yuva Graduates Forum Logo.png";
+import Sumedh from "../assets/Sumedh_Image.png";
 
 const districts = [
   "Nagpur",
@@ -47,14 +49,22 @@ const FileUpload = ({ label, name, file, onChange, onRemove, error }) => {
             <input
               type="file"
               name={name}
-              onChange={onChange}
+              onChange={(e) => {
+                const file = e.target.files[0];
+
+                if (file && file.size > 2 * 1024 * 1024) {
+                  alert("File size must be less than 2MB");
+                  return;
+                }
+
+                onChange(e);
+              }}
               className="hidden"
             />
           </label>
         )}
       </div>
 
-      {/* File size hint */}
       <p className="text-xs text-gray-500 mt-1 w-full text-left">
         Maximum file size: 10 MB (JPG, PNG, PDF)
       </p>
@@ -75,6 +85,8 @@ const UserForm = () => {
     phone: "",
     year: "",
     district: "",
+    gender: "",
+
     aadhar: null,
     marksheet: null,
     photo: null,
@@ -106,9 +118,11 @@ const UserForm = () => {
     if (!formData.aadhar) newErrors.aadhar = "Aadhar Card is required";
     if (!formData.marksheet) newErrors.marksheet = "Marksheet is required";
     if (!formData.photo) newErrors.photo = "Photo is required";
+
     if (formData.gender !== "Male" && !formData.pan) {
       newErrors.pan = "PAN Card is required";
     }
+
     if (!formData.sign) newErrors.sign = "Signature is required";
 
     setErrors(newErrors);
@@ -124,6 +138,7 @@ const UserForm = () => {
     setLoading(true);
 
     try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
       const data = new FormData();
 
       data.append("name", formData.name);
@@ -135,11 +150,13 @@ const UserForm = () => {
       data.append("aadharCard", formData.aadhar);
       data.append("marksheetOrDegree", formData.marksheet);
       data.append("passportPhoto", formData.photo);
+
       data.append("panOrMarriageCert", formData.pan);
+
       data.append("signature", formData.sign);
 
       const response = await fetch(
-        "https://voters-app-backend.vercel.app/api/voters/register",
+        `${baseUrl}/api/voters/register`,
         {
           method: "POST",
           body: data,
@@ -179,11 +196,53 @@ const UserForm = () => {
   const handleRemoveFile = (fieldName) => {
     setFormData({ ...formData, [fieldName]: null });
   };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-blue-100 px-4">
+    <div className="min-h-screen bg-white sm:bg-blue-100 p-0 sm:p-4 md:p-8 w-full">
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="w-full max-w-5xl">
+      {/* Header (unchanged UI, only cleaned structure) */}
+      <div className="w-full mb-6">
+        <div className="rounded-2xl shadow-xl w-full">
+          <div className="bg-white rounded-xl p-6">
+            <div className="flex flex-row flex-wrap items-center justify-between gap-6 w-full">
+              <div className="flex flex-row items-center gap-3 md:gap-6 text-center md:text-left w-full md:w-auto">
+                <div className="bg-gradient-to-br from-orange-100 to-orange-50 p-3 md:p-4 rounded-xl shadow-md">
+                  <img
+                    src={logo}
+                    className="w-16 h-16 md:w-28 md:h-28 object-contain"
+                  />
+                </div>
+
+                <div>
+                  <h1 className="text-xl sm:text-2xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent py-2 whitespace-nowrap">
+                    युवा ग्रॅज्युऐट फोरम
+                  </h1>
+                  <p className="text-sm sm:text-base text-gray-600">Youth Graduates Forum</p>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-md border-2 border-blue-200 md:ml-10 w-full md:w-auto">
+                <div className="flex flex-row items-center gap-4 w-full justify-center md:justify-start text-center md:text-left">
+                  <img
+                    src={Sumedh}
+                    className="w-20 h-20 md:w-32 md:h-32 rounded-full"
+                  />
+                  <div>
+                    <p className="text-xs md:text-sm text-gray-600">
+                      पदवीधर मतदार संघाचे <br /> अधिकृत उमेदवार
+                    </p>
+                    <p className="text-lg md:text-2xl font-bold">
+                      Sumedh Boudh Gadapaile
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full">
         <div className="flex justify-center mb-10">
           <h1 className="bg-red-500 text-white text-xl md:text-2xl font-semibold px-8 py-2 rounded shadow-md tracking-wide">
             VOTER’S REGISTRATION PORTAL
